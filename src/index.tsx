@@ -88,18 +88,19 @@ function useSyncFixtureState<State extends object>(
           store
         });
       }),
-    [store]
+    [store, setContextValue]
   );
 
+  const { changedAt, storeState } = contextValue;
   React.useEffect(() => {
     setFixtureState(fixtureState => ({
       ...fixtureState,
       redux: {
-        changedAt: contextValue.changedAt,
-        state: contextValue.storeState
+        changedAt,
+        state: storeState
       }
     }));
-  }, [contextValue.changedAt]);
+  }, [changedAt, storeState, setFixtureState]);
 }
 
 function useOverrideLocalState<State extends object>(
@@ -122,7 +123,12 @@ function useOverrideLocalState<State extends object>(
         store
       });
     }
-  }, [fixtureState.redux, contextValue.changedAt]);
+  }, [
+    fixtureState.redux,
+    contextValue.changedAt,
+    configureStore,
+    setContextValue
+  ]);
 }
 
 function getTime() {
