@@ -27,7 +27,7 @@ export function ReduxMock<ReduxState extends object>({
     };
   });
 
-  // Subscribe to Redux store changes
+  // Subscribe to Redux store
   const { store } = reduxContext;
   React.useEffect(
     () =>
@@ -59,6 +59,8 @@ export function ReduxMock<ReduxState extends object>({
       return;
     }
 
+    // The changedAt timestamp helps distinguish external fixture state changes
+    // from local ones (reacting to the latter would create an infinite loop)
     const { changedAt, state } = fixtureState.redux;
     if (changedAt > reduxContext.changedAt) {
       const store = configureStore(state);
