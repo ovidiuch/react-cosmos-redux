@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { ReactReduxContext } from 'react-redux';
-import { FixtureContext } from 'react-cosmos-fixture';
+import {
+  FixtureContext,
+  FixtureState,
+  SetFixtureState
+} from 'react-cosmos-fixture';
 import { Store } from 'redux';
-import { SetStateAsync, StateUpdater } from 'react-cosmos-shared2/util';
-import { FixtureState } from 'react-cosmos-shared2/fixtureState';
 
 type ConfigureStore<State extends object> = (
   state: Partial<State>
@@ -24,9 +26,6 @@ type ContextValue<State extends object> = {
 type SetContextValue<State extends object> = React.Dispatch<
   React.SetStateAction<ContextValue<State>>
 >;
-
-// TODO: Export FixtureState & SetFixtureState from react-cosmos-fixture
-type SetFixtureState = SetStateAsync<StateUpdater<FixtureState>>;
 
 export function ReduxMock<State extends object>({
   children,
