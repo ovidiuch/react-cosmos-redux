@@ -40,9 +40,8 @@ export function ReduxMock<State extends object>({
     fixtureState,
     initialState
   );
-  useReduxSubscribe(contextValue.store, setContextValue);
-  useSyncFixtureState(contextValue, setFixtureState);
-  useSyncLocalState(
+  useSyncFixtureState(contextValue, setContextValue, setFixtureState);
+  useOverrideLocalState(
     contextValue,
     fixtureState,
     setContextValue,
@@ -74,10 +73,12 @@ function useCreateContextState<State extends object>(
   });
 }
 
-function useReduxSubscribe<State extends object>(
-  store: Store,
-  setContextValue: SetContextValue<State>
+function useSyncFixtureState<State extends object>(
+  contextValue: ContextValue<State>,
+  setContextValue: SetContextValue<State>,
+  setFixtureState: SetFixtureState
 ) {
+  const { store } = contextValue;
   React.useEffect(
     () =>
       store.subscribe(() => {
@@ -89,12 +90,7 @@ function useReduxSubscribe<State extends object>(
       }),
     [store]
   );
-}
 
-function useSyncFixtureState<State extends object>(
-  contextValue: ContextValue<State>,
-  setFixtureState: SetFixtureState
-) {
   React.useEffect(() => {
     setFixtureState(fixtureState => ({
       ...fixtureState,
@@ -106,7 +102,7 @@ function useSyncFixtureState<State extends object>(
   }, [contextValue.changedAt]);
 }
 
-function useSyncLocalState<State extends object>(
+function useOverrideLocalState<State extends object>(
   contextValue: ContextValue<State>,
   fixtureState: FixtureState,
   setContextValue: SetContextValue<State>,

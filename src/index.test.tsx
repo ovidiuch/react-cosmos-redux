@@ -47,7 +47,7 @@ it('injects initial state into Redux store', async () => {
   await waitForElement(() => getByText('Yay!'));
 });
 
-it('syncs Redux fixture state on local Redux state change', async () => {
+it('syncs Redux fixture state on local store change', async () => {
   type Props = { setYay: () => void };
   const RawComponent = ({ setYay }: Props) => (
     <button onClick={setYay}>Yay!</button>
@@ -101,4 +101,41 @@ it('syncs Redux fixture state on local Redux state change', async () => {
   });
 });
 
-it('syncs local Redux state on fixture state change', async () => {});
+it('overrides local state on fixture state change', async () => {
+  type Props = { yay: boolean };
+  const RawComponent = ({ yay }: Props) => <>{yay ? 'Yay!' : 'Nay!'}</>;
+
+  type State = { yay: boolean };
+  const reducer = (prevState: State = { yay: false }) => prevState;
+
+  const mapStateToProps = ({ yay }: State) => ({ yay });
+  const ConnectedComponent = connect(mapStateToProps)(RawComponent);
+
+  const getElement = (fixtureState: {}) => (
+    <FixtureContext.Provider
+      value={{
+        fixtureState,
+        setFixtureState: () => {}
+      }}
+    >
+      <ReduxMock
+        configureStore={state => createStore(reducer, state)}
+        initialState={{ yay: true }}
+      >
+        <ConnectedComponent />
+      </ReduxMock>
+    </FixtureContext.Provider>
+  );
+
+  const { getByText, rerender } = render(getElement({}));
+  await waitForElement(() => getByText('Yay!'));
+  rerender(
+    getElement({
+      redux: {
+        changedAt: Date.now(),
+        state: { yay: false }
+      }
+    })
+  );
+  await waitForElement(() => getByText('Nay!'));
+});
