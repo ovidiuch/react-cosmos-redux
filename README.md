@@ -24,7 +24,7 @@ export default (
 You'll likely want to avoid passing `configureStore` in every fixture. Creating a thin wrapper will help you keep your fixtures clean.
 
 ```jsx
-// Put this somewhere central (changes are you'll have some utils thingie)
+// Put this somewhere central (chances are you'll have some utils thingie)
 const MyReduxMock = ({ children, initialState }) => (
   <ReduxMock configureStore={configureStore} initialState={initialState}>
     {children}
