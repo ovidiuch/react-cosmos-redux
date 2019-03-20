@@ -6,7 +6,7 @@
 
 Add `react-cosmos-redux` to your project's dev deps.
 
-```tsx
+```jsx
 import { ReduxMock } from 'react-cosmos-redux';
 
 export default (
@@ -23,7 +23,7 @@ export default (
 
 You'll likely want to avoid passing `configureStore` in every fixture. Creating a thin wrapper will help you keep your fixtures clean.
 
-```tsx
+```jsx
 // Put this somewhere central (changes are you'll have some utils thingie)
 const MyReduxMock = ({ children, initialState }) => (
   <ReduxMock configureStore={configureStore} initialState={initialState}>
