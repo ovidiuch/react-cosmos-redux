@@ -1,31 +1,13 @@
 import * as React from 'react';
 import { ReactReduxContext } from 'react-redux';
-import {
-  FixtureContext,
-  FixtureState,
-  SetFixtureState
-} from 'react-cosmos-fixture';
+import { FixtureContext } from 'react-cosmos-fixture';
 import { Store } from 'redux';
-
-type ConfigureStore<ReduxState extends object> = (
-  state: Partial<ReduxState>
-) => Store<ReduxState>;
 
 type Props<ReduxState extends object> = {
   children: React.ReactNode;
-  configureStore: ConfigureStore<ReduxState>;
+  configureStore: (state: Partial<ReduxState>) => Store<ReduxState>;
   initialState?: Partial<ReduxState>;
 };
-
-type ReduxContext<ReduxState extends object> = {
-  changedAt: number;
-  storeState: ReduxState;
-  store: Store<ReduxState>;
-};
-
-type SetReduxContext<ReduxState extends object> = React.Dispatch<
-  React.SetStateAction<ReduxContext<ReduxState>>
->;
 
 export function ReduxMock<ReduxState extends object>({
   children,
@@ -34,38 +16,8 @@ export function ReduxMock<ReduxState extends object>({
 }: Props<ReduxState>) {
   const { fixtureState, setFixtureState } = React.useContext(FixtureContext);
 
-  const [reduxContext, setReduxContext] = useReduxContextState<ReduxState>(
-    configureStore,
-    fixtureState,
-    initialState
-  );
-  useSyncFixtureState<ReduxState>(
-    reduxContext,
-    setReduxContext,
-    setFixtureState
-  );
-  useOverrideLocalState<ReduxState>(
-    reduxContext,
-    fixtureState,
-    setReduxContext,
-    configureStore
-  );
-
-  return (
-    <ReactReduxContext.Provider value={reduxContext}>
-      {children}
-    </ReactReduxContext.Provider>
-  );
-}
-
-ReduxMock.cosmosCapture = false;
-
-function useReduxContextState<ReduxState extends object>(
-  configureStore: ConfigureStore<ReduxState>,
-  fixtureState: FixtureState,
-  initialState?: Partial<ReduxState>
-) {
-  return React.useState<ReduxContext<ReduxState>>(() => {
+  // Create Redux context state
+  const [reduxContext, setReduxContext] = React.useState(() => {
     const state = fixtureState.redux ? fixtureState.redux.state : initialState;
     const store = configureStore(state);
     return {
@@ -74,13 +26,8 @@ function useReduxContextState<ReduxState extends object>(
       store
     };
   });
-}
 
-function useSyncFixtureState<ReduxState extends object>(
-  reduxContext: ReduxContext<ReduxState>,
-  setReduxContext: SetReduxContext<ReduxState>,
-  setFixtureState: SetFixtureState
-) {
+  // Subscribe to Redux store
   const { store } = reduxContext;
   React.useEffect(
     () =>
@@ -94,6 +41,7 @@ function useSyncFixtureState<ReduxState extends object>(
     [store, setReduxContext]
   );
 
+  // Synchronize fixture state with local Redux state
   const { changedAt, storeState } = reduxContext;
   React.useEffect(() => {
     setFixtureState(fixtureState => ({
@@ -104,19 +52,15 @@ function useSyncFixtureState<ReduxState extends object>(
       }
     }));
   }, [changedAt, storeState, setFixtureState]);
-}
 
-function useOverrideLocalState<ReduxState extends object>(
-  reduxContext: ReduxContext<ReduxState>,
-  fixtureState: FixtureState,
-  setReduxContext: SetReduxContext<ReduxState>,
-  configureStore: ConfigureStore<ReduxState>
-) {
+  // Override local Redux state when fixture changed by other client
   React.useEffect(() => {
     if (!fixtureState.redux) {
       return;
     }
 
+    // The changedAt timestamp helps distinguish external fixture state changes
+    // from local ones (reacting to the latter would create an infinite loop)
     const { changedAt, state } = fixtureState.redux;
     if (changedAt > reduxContext.changedAt) {
       const store = configureStore(state);
@@ -132,7 +76,15 @@ function useOverrideLocalState<ReduxState extends object>(
     configureStore,
     setReduxContext
   ]);
+
+  return (
+    <ReactReduxContext.Provider value={reduxContext}>
+      {children}
+    </ReactReduxContext.Provider>
+  );
 }
+
+ReduxMock.cosmosCapture = false;
 
 function getTime() {
   return Date.now();
