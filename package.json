@@ -2,10 +2,13 @@
   "name": "react-cosmos-redux",
   "version": "1.0.0",
   "description": "Redux mock for React Cosmos fixtures",
-  "main": "dist/index.js",
   "repository": "https://github.com/skidding/react-cosmos-redux.git",
   "author": "Ovidiu Cherecheș <skidding@gmail.com>",
   "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
