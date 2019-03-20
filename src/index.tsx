@@ -3,13 +3,9 @@ import { ReactReduxContext } from 'react-redux';
 import { FixtureContext } from 'react-cosmos-fixture';
 import { Store } from 'redux';
 
-type ConfigureStore<ReduxState extends object> = (
-  state: Partial<ReduxState>
-) => Store<ReduxState>;
-
 type Props<ReduxState extends object> = {
   children: React.ReactNode;
-  configureStore: ConfigureStore<ReduxState>;
+  configureStore: (state: Partial<ReduxState>) => Store<ReduxState>;
   initialState?: Partial<ReduxState>;
 };
 
