@@ -113,16 +113,18 @@ function useSyncLocalState<State extends object>(
   configureStore: ConfigureStore<State>
 ) {
   React.useEffect(() => {
-    if (fixtureState.redux) {
-      const { changedAt, state } = fixtureState.redux;
-      if (changedAt > contextValue.changedAt) {
-        const store = configureStore(state);
-        setContextValue({
-          changedAt,
-          storeState: store.getState(),
-          store
-        });
-      }
+    if (!fixtureState.redux) {
+      return;
+    }
+
+    const { changedAt, state } = fixtureState.redux;
+    if (changedAt > contextValue.changedAt) {
+      const store = configureStore(state);
+      setContextValue({
+        changedAt,
+        storeState: store.getState(),
+        store
+      });
     }
   }, [fixtureState.redux, contextValue.changedAt]);
 }
