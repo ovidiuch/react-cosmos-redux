@@ -12,7 +12,7 @@ type ConfigureStore<State extends object> = (
 type Props<State extends object> = {
   children: React.ReactNode;
   configureStore: ConfigureStore<State>;
-  initialState: Partial<State>;
+  initialState?: Partial<State>;
 };
 
 type ContextValue<State extends object> = {
@@ -37,8 +37,8 @@ export function ReduxMock<State extends object>({
 
   const [contextValue, setContextValue] = useCreateContextState<State>(
     configureStore,
-    initialState,
-    fixtureState
+    fixtureState,
+    initialState
   );
   useReduxSubscribe(contextValue.store, setContextValue);
   useSyncFixtureState(contextValue, setFixtureState);
@@ -60,8 +60,8 @@ ReduxMock.cosmosCapture = false;
 
 function useCreateContextState<State extends object>(
   configureStore: ConfigureStore<State>,
-  initialState: Partial<State>,
-  fixtureState: FixtureState
+  fixtureState: FixtureState,
+  initialState?: Partial<State>
 ) {
   return React.useState<ContextValue<State>>(() => {
     const state = fixtureState.redux ? fixtureState.redux.state : initialState;
