@@ -34,7 +34,7 @@ export function ReduxMock<ReduxState extends object>({
 }: Props<ReduxState>) {
   const { fixtureState, setFixtureState } = React.useContext(FixtureContext);
 
-  const [contextValue, setContextValue] = useCreateContextState<ReduxState>(
+  const [contextValue, setContextValue] = useReduxContextState<ReduxState>(
     configureStore,
     fixtureState,
     initialState
@@ -60,7 +60,7 @@ export function ReduxMock<ReduxState extends object>({
 
 ReduxMock.cosmosCapture = false;
 
-function useCreateContextState<ReduxState extends object>(
+function useReduxContextState<ReduxState extends object>(
   configureStore: ConfigureStore<ReduxState>,
   fixtureState: FixtureState,
   initialState?: Partial<ReduxState>
