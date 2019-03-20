@@ -7,40 +7,44 @@ import {
 } from 'react-cosmos-fixture';
 import { Store } from 'redux';
 
-type ConfigureStore<State extends object> = (
-  state: Partial<State>
-) => Store<State>;
+type ConfigureStore<ReduxState extends object> = (
+  state: Partial<ReduxState>
+) => Store<ReduxState>;
 
-type Props<State extends object> = {
+type Props<ReduxState extends object> = {
   children: React.ReactNode;
-  configureStore: ConfigureStore<State>;
-  initialState?: Partial<State>;
+  configureStore: ConfigureStore<ReduxState>;
+  initialState?: Partial<ReduxState>;
 };
 
-type ContextValue<State extends object> = {
+type ReduxContextValue<ReduxState extends object> = {
   changedAt: number;
-  storeState: State;
-  store: Store<State>;
+  storeState: ReduxState;
+  store: Store<ReduxState>;
 };
 
-type SetContextValue<State extends object> = React.Dispatch<
-  React.SetStateAction<ContextValue<State>>
+type SetReduxContextValue<ReduxState extends object> = React.Dispatch<
+  React.SetStateAction<ReduxContextValue<ReduxState>>
 >;
 
-export function ReduxMock<State extends object>({
+export function ReduxMock<ReduxState extends object>({
   children,
   configureStore,
   initialState
-}: Props<State>) {
+}: Props<ReduxState>) {
   const { fixtureState, setFixtureState } = React.useContext(FixtureContext);
 
-  const [contextValue, setContextValue] = useCreateContextState<State>(
+  const [contextValue, setContextValue] = useCreateContextState<ReduxState>(
     configureStore,
     fixtureState,
     initialState
   );
-  useSyncFixtureState(contextValue, setContextValue, setFixtureState);
-  useOverrideLocalState(
+  useSyncFixtureState<ReduxState>(
+    contextValue,
+    setContextValue,
+    setFixtureState
+  );
+  useOverrideLocalState<ReduxState>(
     contextValue,
     fixtureState,
     setContextValue,
@@ -56,12 +60,12 @@ export function ReduxMock<State extends object>({
 
 ReduxMock.cosmosCapture = false;
 
-function useCreateContextState<State extends object>(
-  configureStore: ConfigureStore<State>,
+function useCreateContextState<ReduxState extends object>(
+  configureStore: ConfigureStore<ReduxState>,
   fixtureState: FixtureState,
-  initialState?: Partial<State>
+  initialState?: Partial<ReduxState>
 ) {
-  return React.useState<ContextValue<State>>(() => {
+  return React.useState<ReduxContextValue<ReduxState>>(() => {
     const state = fixtureState.redux ? fixtureState.redux.state : initialState;
     const store = configureStore(state);
     return {
@@ -72,9 +76,9 @@ function useCreateContextState<State extends object>(
   });
 }
 
-function useSyncFixtureState<State extends object>(
-  contextValue: ContextValue<State>,
-  setContextValue: SetContextValue<State>,
+function useSyncFixtureState<ReduxState extends object>(
+  contextValue: ReduxContextValue<ReduxState>,
+  setContextValue: SetReduxContextValue<ReduxState>,
   setFixtureState: SetFixtureState
 ) {
   const { store } = contextValue;
@@ -102,11 +106,11 @@ function useSyncFixtureState<State extends object>(
   }, [changedAt, storeState, setFixtureState]);
 }
 
-function useOverrideLocalState<State extends object>(
-  contextValue: ContextValue<State>,
+function useOverrideLocalState<ReduxState extends object>(
+  contextValue: ReduxContextValue<ReduxState>,
   fixtureState: FixtureState,
-  setContextValue: SetContextValue<State>,
-  configureStore: ConfigureStore<State>
+  setContextValue: SetReduxContextValue<ReduxState>,
+  configureStore: ConfigureStore<ReduxState>
 ) {
   React.useEffect(() => {
     if (!fixtureState.redux) {
