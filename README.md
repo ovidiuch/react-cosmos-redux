@@ -2,6 +2,10 @@
 
 [![Build](https://travis-ci.com/skidding/react-cosmos-redux.svg?branch=master)](https://travis-ci.com/skidding/react-cosmos-redux) [![Coverage](https://codecov.io/gh/skidding/react-cosmos-redux/branch/master/graph/badge.svg)](https://codecov.io/gh/skidding/react-cosmos-redux)
 
+> Example of `ReduxMock` syncing Redux state between remote React Cosmos renderers
+
+![Redux state sync example](redux-state-sync.gif)
+
 ## Usage
 
 Add `react-cosmos-redux` to your project's dev deps.
