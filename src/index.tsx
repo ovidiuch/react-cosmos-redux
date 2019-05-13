@@ -22,7 +22,7 @@ export function ReduxMock<ReduxState extends object>({
     const store = configureStore(state);
     return {
       changedAt: getTime(),
-      storeState: store.getState(),
+      // storeState: store.getState(),
       store
     };
   });
@@ -34,7 +34,7 @@ export function ReduxMock<ReduxState extends object>({
       store.subscribe(() => {
         setReduxContext({
           changedAt: getTime(),
-          storeState: store.getState(),
+          // storeState: store.getState(),
           store
         });
       }),
@@ -42,16 +42,17 @@ export function ReduxMock<ReduxState extends object>({
   );
 
   // Synchronize fixture state with local Redux state
-  const { changedAt, storeState } = reduxContext;
+  // const { changedAt, storeState } = reduxContext;
+  const { changedAt } = reduxContext;
   React.useEffect(() => {
     setFixtureState(fixtureState => ({
       ...fixtureState,
       redux: {
         changedAt,
-        state: storeState
+        state: store.getState()
       }
     }));
-  }, [changedAt, storeState, setFixtureState]);
+  }, [changedAt, store, setFixtureState]);
 
   // Override local Redux state when fixture changed by other client
   React.useEffect(() => {
@@ -66,7 +67,7 @@ export function ReduxMock<ReduxState extends object>({
       const store = configureStore(state);
       setReduxContext({
         changedAt,
-        storeState: store.getState(),
+        // storeState: store.getState(),
         store
       });
     }
@@ -78,6 +79,7 @@ export function ReduxMock<ReduxState extends object>({
   ]);
 
   return (
+    // @ts-ignore
     <ReactReduxContext.Provider value={reduxContext}>
       {children}
     </ReactReduxContext.Provider>
