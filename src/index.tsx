@@ -18,7 +18,9 @@ export function ReduxMock<ReduxState extends object>({
 
   // Create Redux context state
   const [reduxContext, setReduxContext] = React.useState(() => {
-    const state = fixtureState.redux ? fixtureState.redux.state : initialState;
+    const state = fixtureState.redux
+      ? (fixtureState.redux as any).state
+      : initialState;
     const store = configureStore(state);
     return {
       changedAt: getTime(),
@@ -61,7 +63,7 @@ export function ReduxMock<ReduxState extends object>({
 
     // The changedAt timestamp helps distinguish external fixture state changes
     // from local ones (reacting to the latter would create an infinite loop)
-    const { changedAt, state } = fixtureState.redux;
+    const { changedAt, state } = fixtureState.redux as any;
     if (changedAt > reduxContext.changedAt) {
       const store = configureStore(state);
       setReduxContext({
