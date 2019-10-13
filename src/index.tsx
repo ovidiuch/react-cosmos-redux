@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactReduxContext } from 'react-redux';
-import { FixtureContext } from 'react-cosmos-fixture';
+import { FixtureContext } from 'react-cosmos/fixture';
 import { Store } from 'redux';
 
 type Props<ReduxState extends object> = {

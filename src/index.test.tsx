@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createStore } from 'redux';
 import { connect } from 'react-redux';
-import { FixtureContext } from 'react-cosmos-fixture';
+import { FixtureContext } from 'react-cosmos/fixture';
 import {
   render,
   waitForElement,
