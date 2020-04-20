@@ -1,6 +1,6 @@
 {
   "name": "react-cosmos-redux",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Redux mock for React Cosmos fixtures",
   "repository": "https://github.com/skidding/react-cosmos-redux.git",
   "author": "Ovidiu Cherecheș <skidding@gmail.com>",
