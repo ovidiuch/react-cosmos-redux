@@ -1,29 +1,24 @@
+import { waitFor } from '@testing-library/dom';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import * as React from 'react';
-import { createStore } from 'redux';
-import { connect } from 'react-redux';
 import { FixtureContext } from 'react-cosmos/fixture';
-import {
-  render,
-  waitForElement,
-  fireEvent,
-  cleanup,
-  wait
-} from 'react-testing-library';
+import { connect } from 'react-redux';
+import { createStore } from 'redux';
 import { ReduxMock } from '.';
 
 afterEach(cleanup);
 
 it('renders children', async () => {
   const reducer = () => ({});
-  const { getByText } = render(
+  const { findByText } = render(
     <ReduxMock
-      configureStore={state => createStore(reducer, state)}
+      configureStore={(state) => createStore(reducer, state)}
       initialState={{}}
     >
       Ola Cosmos!
     </ReduxMock>
   );
-  await waitForElement(() => getByText('Ola Cosmos!'));
+  await findByText('Ola Cosmos!');
 });
 
 it('injects initial state', async () => {
@@ -36,15 +31,15 @@ it('injects initial state', async () => {
   const mapStateToProps = ({ yay }: State) => ({ yay });
   const ConnectedComponent = connect(mapStateToProps)(RawComponent);
 
-  const { getByText } = render(
+  const { findByText } = render(
     <ReduxMock
-      configureStore={state => createStore(reducer, state)}
+      configureStore={(state) => createStore(reducer, state)}
       initialState={{ yay: true }}
     >
       <ConnectedComponent />
     </ReduxMock>
   );
-  await waitForElement(() => getByText('Yay!'));
+  await findByText('Yay!');
 });
 
 it('injects fixture state', async () => {
@@ -57,24 +52,24 @@ it('injects fixture state', async () => {
   const mapStateToProps = ({ yay }: State) => ({ yay });
   const ConnectedComponent = connect(mapStateToProps)(RawComponent);
 
-  const { getByText } = render(
+  const { findByText } = render(
     <FixtureContext.Provider
       value={{
         fixtureState: {
           redux: {
             changedAt: Date.now(),
-            state: { yay: true }
-          }
+            state: { yay: true },
+          },
         },
-        setFixtureState: () => {}
+        setFixtureState: () => {},
       }}
     >
-      <ReduxMock configureStore={state => createStore(reducer, state)}>
+      <ReduxMock configureStore={(state) => createStore(reducer, state)}>
         <ConnectedComponent />
       </ReduxMock>
     </FixtureContext.Provider>
   );
-  await waitForElement(() => getByText('Yay!'));
+  await findByText('Yay!');
 });
 
 it('syncs fixture state on local state change', async () => {
@@ -109,24 +104,24 @@ it('syncs fixture state on local state change', async () => {
     <FixtureContext.Provider
       value={{
         fixtureState,
-        setFixtureState: stateUpdater => {
+        setFixtureState: (stateUpdater) => {
           fixtureState = stateUpdater(fixtureState);
-        }
+        },
       }}
     >
-      <ReduxMock configureStore={state => createStore(reducer, state)}>
+      <ReduxMock configureStore={(state) => createStore(reducer, state)}>
         <ConnectedComponent />
       </ReduxMock>
     </FixtureContext.Provider>
   );
 
   fireEvent.click(getByText('Yay!'));
-  await wait(() => {
+  await waitFor(() => {
     expect(fixtureState.redux).toEqual({
       changedAt: expect.any(Number),
       state: {
-        yay: true
-      }
+        yay: true,
+      },
     });
   });
 });
@@ -145,11 +140,11 @@ it('overrides local state on fixture state change', async () => {
     <FixtureContext.Provider
       value={{
         fixtureState,
-        setFixtureState: () => {}
+        setFixtureState: () => {},
       }}
     >
       <ReduxMock
-        configureStore={state => createStore(reducer, state)}
+        configureStore={(state) => createStore(reducer, state)}
         initialState={{ yay: true }}
       >
         <ConnectedComponent />
@@ -157,15 +152,15 @@ it('overrides local state on fixture state change', async () => {
     </FixtureContext.Provider>
   );
 
-  const { getByText, rerender } = render(getElement({}));
-  await waitForElement(() => getByText('Yay!'));
+  const { findByText, rerender } = render(getElement({}));
+  await findByText('Yay!');
   rerender(
     getElement({
       redux: {
         changedAt: Date.now(),
-        state: { yay: false }
-      }
+        state: { yay: false },
+      },
     })
   );
-  await waitForElement(() => getByText('Nay!'));
+  await findByText('Nay!');
 });
