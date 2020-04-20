@@ -47,7 +47,7 @@ export function ReduxMock<ReduxState extends object = any>({
 
   // Synchronize fixture state with local Redux state
   React.useEffect(() => {
-    setFixtureState((fixtureState) => ({
+    setFixtureState(fixtureState => ({
       ...fixtureState,
       redux: {
         changedAt: state.changedAt,

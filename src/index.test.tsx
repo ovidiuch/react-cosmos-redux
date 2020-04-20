@@ -12,7 +12,7 @@ it('renders children', async () => {
   const reducer = () => ({});
   const { findByText } = render(
     <ReduxMock
-      configureStore={(state) => createStore(reducer, state)}
+      configureStore={state => createStore(reducer, state)}
       initialState={{}}
     >
       Ola Cosmos!
@@ -33,7 +33,7 @@ it('injects initial state', async () => {
 
   const { findByText } = render(
     <ReduxMock
-      configureStore={(state) => createStore(reducer, state)}
+      configureStore={state => createStore(reducer, state)}
       initialState={{ yay: true }}
     >
       <ConnectedComponent />
@@ -64,7 +64,7 @@ it('injects fixture state', async () => {
         setFixtureState: () => {},
       }}
     >
-      <ReduxMock configureStore={(state) => createStore(reducer, state)}>
+      <ReduxMock configureStore={state => createStore(reducer, state)}>
         <ConnectedComponent />
       </ReduxMock>
     </FixtureContext.Provider>
@@ -104,12 +104,12 @@ it('syncs fixture state on local state change', async () => {
     <FixtureContext.Provider
       value={{
         fixtureState,
-        setFixtureState: (stateUpdater) => {
+        setFixtureState: stateUpdater => {
           fixtureState = stateUpdater(fixtureState);
         },
       }}
     >
-      <ReduxMock configureStore={(state) => createStore(reducer, state)}>
+      <ReduxMock configureStore={state => createStore(reducer, state)}>
         <ConnectedComponent />
       </ReduxMock>
     </FixtureContext.Provider>
@@ -144,7 +144,7 @@ it('overrides local state on fixture state change', async () => {
       }}
     >
       <ReduxMock
-        configureStore={(state) => createStore(reducer, state)}
+        configureStore={state => createStore(reducer, state)}
         initialState={{ yay: true }}
       >
         <ConnectedComponent />
