@@ -12,8 +12,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test": "jest --coverage"
   },
   "dependencies": {},
   "devDependencies": {
